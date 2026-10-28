@@ -2,7 +2,7 @@
 // mode (SCROLL_BEHAVIOUR.md), with the same classes as Views/Shared/_Layout.cshtml so site.css lays it out the same way.
 // The side menu of the other 14 reports is not part of this app.
 import type { ReactNode } from 'react';
-import logo from '../../../wwwroot/img/logo-southern.png';
+import logo from '../assets/logo-southern.png';
 import { clearSession, type UserSession } from '../lib/auth';
 
 function initials(name: string): string {

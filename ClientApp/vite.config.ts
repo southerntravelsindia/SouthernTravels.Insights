@@ -23,8 +23,6 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 5173,
       strictPort: true,
-      // tokens.css, site.css, login.css and the logo are imported unchanged from the Insights site (D1).
-      fs: { allow: ['.', '../wwwroot/css', '../wwwroot/img'] },
       proxy: env.STPL_API_PROXY_TARGET
         ? { '/stpl-api': { target: env.STPL_API_PROXY_TARGET, changeOrigin: true, rewrite: (p) => p.replace(/^\/stpl-api/, '') } }
         : undefined,

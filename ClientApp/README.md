@@ -1,8 +1,10 @@
 # INS-01 Ticket & Service Status — standalone React app
 
 A static single-page app (React 19, TypeScript, Vite 8) that signs the user in with an OTP and calls
-**STPLCostSheetAPI directly**. It does not need the Insights .NET site; it only reuses its stylesheets and logo at build
-time (`../wwwroot/css/tokens.css`, `site.css`, `login.css`, `../wwwroot/img/logo-southern.png`, imported unchanged).
+**STPLCostSheetAPI directly**. The repo no longer contains the .NET Insights site: its stylesheets and logo are kept
+here unchanged (`src/styles/insights/tokens.css`, `site.css`, `login.css`, `src/assets/logo-southern.png`), copied from
+the Razor site at commit `56d2c67`. That commit is also the design baseline the code comments refer to (`Views/...`,
+`Infrastructure/...`). The page-scroll pattern is described in `docs/SCROLL_BEHAVIOUR.md`.
 
 > Design change from TSD INS-01 v0.7.5 §2.2 (React behind the ASP.NET Core BFF), requested 28 Oct 2026 with the tech
 > lead's approval stated by the developer. The TSD, the contract's "Callers" section and the security review need
@@ -37,7 +39,7 @@ On Git Bash, a value such as `/stpl-api/` passed on the command line is turned i
   `UserName` in the body, `MineOnly`, paging and row keys from the URL state. Replies are mapped in
   `src/reports/ins01/data.ts`. 15 s timeout; 401 → token forgotten, login page.
 - Login uses `Account/SendOTP` and `Account/ValidateUserOTP` with the bodies the Insights login sends today
-  (`Services/AccountService.cs`); **there is no contract file for them yet**.
+  (`Services/AccountService.cs` at `56d2c67`); **there is no contract file for them yet**.
 - The token is kept in `sessionStorage` (this tab only, cleared on logout or when the tab closes). It is readable by
   any script on the page, so the site must load no third-party scripts and must send a strict CSP.
 

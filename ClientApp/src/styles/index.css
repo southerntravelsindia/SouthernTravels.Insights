@@ -1,3 +1,3 @@
 /* Global styles: the Insights design tokens, imported unchanged (D1). The report chunk adds site.css and ins01.css;
    the login chunk adds login.css. */
-@import '../../../wwwroot/css/tokens.css';
+@import './insights/tokens.css';

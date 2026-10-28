@@ -3,8 +3,8 @@
 // sessionStorage only. Rate limiting of these routes must be enforced by the API (the browser can't).
 import { useEffect, useState, type FormEvent } from 'react';
 import { useSearchParams } from 'react-router';
-import logo from '../../../wwwroot/img/logo-southern.png';
-import '../../../wwwroot/css/login.css';
+import logo from '../assets/logo-southern.png';
+import '../styles/insights/login.css';
 import { ApiError, accountCall, prop } from '../lib/api';
 import { safeReturnTo, setSession } from '../lib/auth';
 

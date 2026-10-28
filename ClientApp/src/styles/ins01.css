@@ -1,7 +1,7 @@
 /* =====================================================================
    INS-01 Ticket & Service Status (React). Everything is scoped under .ins01 (the mount element) so nothing here can
-   reach the other 14 reports. Copied from site.css: the Ticket-Wise table block and the sticky-bar block (the Razor copy
-   stays for the Razor page and the other reports, D1/D4). New: the cell classes DataTable writes instead of the
+   leak into anything else. Copied from site.css: the Ticket-Wise table block and the sticky-bar block (site.css itself
+   stays unchanged in styles/insights/, D1). New: the cell classes DataTable writes instead of the
    generated CardCss/AlignCss rules, and open/closed rows from React state instead of :has(.rx:checked).
    ===================================================================== */
 
