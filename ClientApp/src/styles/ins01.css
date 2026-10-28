@@ -5,6 +5,14 @@
    generated CardCss/AlignCss rules, and open/closed rows from React state instead of :has(.rx:checked).
    ===================================================================== */
 
+/* Header user block (the Razor layout shows it in the side menu, which this app doesn't have). */
+.ins01-app .ins01-user { display: flex; align-items: center; gap: 8px; min-width: 0; white-space: nowrap; }
+.ins01-app .ins01-user .avatar { width: 28px; height: 28px; flex: none; border-radius: 50%; background: var(--avatar-bg); color: var(--avatar-ink); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.ins01-app .ins01-user .who { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+.ins01-app .ins01-user .who b { font-size: 12px; font-weight: 600; color: var(--ink-heading); }
+.ins01-app .ins01-user .who small { font-size: 10px; color: var(--ink-muted); }
+@media (max-width: 559px) { .ins01-app .ins01-user .who { display: none; } }
+
 /* Mount element: a column inside <main>, like the Razor page's direct children. */
 .ins01 { display: flex; flex-direction: column; flex: none; }
 

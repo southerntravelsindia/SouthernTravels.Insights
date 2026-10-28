@@ -1,66 +1,71 @@
-// Synthetic INS-01 data for component tests (no real customers).
-import type { Kpi, ListPage, TicketRow, TicketService, VendorRow } from '../src/reports/ins01/types';
+// Synthetic STPLCostSheetAPI replies (contract INS-01 v0.1 shapes, PascalCase). No real customers.
+import type { UserSession } from '../src/lib/auth';
 
-export const kpi: Kpi = { totalTickets: 3, newTickets: 1, inProgressTickets: 1, completedTickets: 1, cancelledTickets: 0, newToCompletedTatDays: 4.5 };
+export const user: UserSession = { token: 'test-jwt', userName: 'test.ops', name: 'Test Ops', opsBranch: 'DEL001', isAdmin: false };
 
-export const ticket = (n: number, over: Partial<TicketRow> = {}): TicketRow => ({
-  ticketRowKey: n,
-  mbkNo: `MBK-TEST-${n}`,
-  ticketNo: `GRP${1000 + n}`,
-  fileNo: `FN/00000${n}/2026-27/DEL001`,
-  passenger: `Test Passenger ${n}`,
-  tourName: 'Test Tour',
-  pax: 2,
-  ticketStatus: 'Confirmed',
-  bookingDate: '2026-09-02',
-  bookingExecutiveName: 'Test Exec',
-  bookingBranch: 'Delhi',
-  opsStatus: 'In Progress',
-  opsBranchCodes: 'DEL001,HYD001',
-  tourStartDate: '2026-10-12',
-  tourEndDate: '2026-10-18',
-  tourDays: 7,
-  daysLeft: 7,
-  totalAmount: 100000,
-  paidAmount: 40000,
-  balancePending: 60000,
-  percentPaid: 40,
-  serviceCount: 3,
-  completionPct: 33,
-  pendingServices: 2,
-  cancelledServices: 0,
-  isVoucherEnabled: false,
-  isMine: n === 1,
-  isCancelled: false,
+export const envelope = (Data: unknown) => ({ Success: true, Message: 'ok', Data });
+
+export const kpi = { TotalTickets: 3, NewTickets: 1, InProgressTickets: 1, CompletedTickets: 1, CancelledTickets: 0, NewToCompletedTATDays: 4.5 };
+
+export const ticket = (n: number, over: Record<string, unknown> = {}) => ({
+  TicketRowKey: n,
+  CostsheetID: 500 + n,
+  MBKID: 9000 + n,
+  MBKNo: `MBK-TEST-${n}`,
+  TicketNo: `GRP${1000 + n}`,
+  FileNo: `FN/00000${n}/2026-27/DEL001`,
+  Passenger: `Test Passenger ${n}`,
+  TourName: 'Test Tour',
+  Pax: 2,
+  TicketStatus: 'Confirmed',
+  BookingDate: '2026-09-02T00:00:00',
+  BookingExecutiveName: 'Test Exec',
+  BookingBranch: 'Delhi',
+  OpsStatusId: 9,
+  OpsStatus: 'In Progress',
+  OpsBranchCodes: 'DEL001,HYD001',
+  TourStartDate: '2026-10-12',
+  TourEndDate: '2026-10-18',
+  TourDays: 7,
+  DaysLeft: 7,
+  TotalAmount: 100000,
+  PaidAmount: 40000,
+  BalancePending: 60000,
+  PercentPaid: 40,
+  ServiceCount: 3,
+  CompletionPct: 33,
+  PendingServices: 2,
+  CancelledServices: 0,
+  IsMine: n === 1,
+  IsCancelled: false,
   ...over,
 });
 
-export const ticketPage = (rows: TicketRow[]): ListPage<TicketRow> => ({
-  rows,
-  paging: { totalCount: rows.length, pageNumber: 1, pageSize: 10, showingFrom: rows.length ? 1 : 0, showingTo: rows.length, totalPages: 1 },
+export const paging = (count: number, page = 1) => ({
+  TotalCount: count, PageNumber: page, PageSize: 10, ShowingFrom: count ? (page - 1) * 10 + 1 : 0, ShowingTo: Math.min(page * 10, count), TotalPages: Math.max(1, Math.ceil(count / 10)),
 });
 
-export const service = (ticketRowKey: number, i: number): TicketService => ({
-  serviceRowId: ticketRowKey * 100 + i,
-  ticketRowKey,
-  svcType: 'Accommodation',
-  city: 'Agra',
-  nameOfService: `Test Hotel ${i}`,
-  category: 'Deluxe',
-  mealPlan: 'MAP',
-  opsUser: 'Test Ops',
-  opsBranch: 'DEL001',
-  opsStatus: 'Completed',
-  serviceStatus: 'Confirmed',
-  confirmationDate: i === 0 ? null : '2026-09-09',
-  confirmationNo: 'CN-1',
-  svcStart: '2026-10-14',
-  svcEnd: '2026-10-16',
-  days: 2,
-  isVoucherEnabled: i !== 0,
+export const service = (ticketRowKey: number, i: number) => ({
+  ServiceRowId: ticketRowKey * 100 + i,
+  TicketRowKey: ticketRowKey,
+  SvcType: 'Accommodation',
+  City: 'Agra',
+  NameOfService: `Test Hotel ${i}`,
+  Category: 'Deluxe',
+  MealPlan: 'MAP',
+  OpsUser: 'Test Ops',
+  OpsBranch: 'DEL001',
+  OpsStatus: 'Completed',
+  ServiceStatus: 'Confirmed',
+  ConfirmationDate: i === 0 ? null : '2026-09-09',
+  ConfirmationNo: 'CN-1',
+  SvcStart: '2026-10-14',
+  SvcEnd: '2026-10-16',
+  Days: 2,
+  IsVoucherEnabled: i !== 0,
 });
 
-export const vendor: VendorRow = {
-  vendorId: 101, vendorCode: 'V101', vendorName: 'Test Vendor', cities: 'Agra,Delhi', serviceTypes: 'Accommodation,Transport',
-  tickets: 2, serviceCount: 3, totalSaleValue: 150000, vendorPayable: 120000, vendorPaid: 100000, balancePending: 20000, isActive: true,
-};
+export const vendor = (id: number) => ({
+  VendorId: id, VendorCode: `V${id}`, VendorName: `Test Vendor ${id}`, Cities: 'Agra,Delhi', ServiceTypes: 'Accommodation,Transport',
+  Tickets: 2, ServiceCount: 3, TotalSaleValue: 150000, VendorPayable: 120000, VendorPaid: 100000, BalancePending: 20000, IsActive: true,
+});

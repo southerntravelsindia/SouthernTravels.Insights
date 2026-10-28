@@ -1,5 +1,3 @@
-/* INS-01 styles. tokens.css is imported unchanged (D1). The shared report chrome (header, side menu, KPI cards, tabs,
-   toolbar, pager, card layout) stays in wwwroot/css/site.css, which _Layout loads for every report; ins01.css holds the
-   INS-01 parts and the class-based replacements for the Razor page's CSS-only interactions. */
+/* Global styles: the Insights design tokens, imported unchanged (D1). The report chunk adds site.css and ins01.css;
+   the login chunk adds login.css. */
 @import '../../../wwwroot/css/tokens.css';
-@import './ins01.css';

@@ -2,7 +2,6 @@
 // in the same order, as the Razor page (Views/TicketServiceStatus/Index.cshtml). Phase 4a: sample data from the BFF.
 import { useCallback, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
-import { pageConfig } from '../../app/config';
 import { ErrorPanel } from '../../components/ErrorPanel';
 import { KpiRow, type KpiItem } from '../../components/KpiRow';
 import { Pager } from '../../components/Pager';
@@ -31,8 +30,11 @@ export function kpiItems(k: Kpi | null): KpiItem[] {
   ];
 }
 
-export function Ins01Page() {
-  const cfg = pageConfig();
+const TITLE = 'Ticket & Service Status';
+const DESCRIPTION = "Ticket & Service Status — an employee-wise view of every ticket and its linked services. Covers OPS Activity (what's New, In Progress, or Completed per OPS user), Pending Follow-up Identification (tickets needing immediate attention), Service Completion Tracking (a closed-loop log of everything marked Completed), Branch-wise OPS Performance (activity grouped by OPS Branch), and Overall OPS Status Visibility across the board.";
+
+/** @param userName the signed-in user's display name, for the "Files assigned to you" legend. */
+export function Ins01Page({ userName }: { userName: string }) {
   const [params] = useSearchParams();
   const s: Ins01State = readState(params);
   const listKey = `${s.tab}|${s.page}|${s.all}`;
@@ -60,7 +62,7 @@ export function Ins01Page() {
 
   return (
     <>
-      <ReportHeader title={cfg.title} description={cfg.description} />
+      <ReportHeader title={TITLE} description={DESCRIPTION} />
       {kpi.status === 'error' ? (
         <KpiDegraded onRetry={reloadKpi} />
       ) : (
@@ -83,7 +85,7 @@ export function Ins01Page() {
 
       <div className="results">
         <div className="legend">
-          <span className="swatch" />Files assigned to you ({cfg.userName})
+          <span className="swatch" />Files assigned to you ({userName})
           <Link className="legend-btn" to={showAllHref(s)}>{s.all ? 'Show mine only' : 'Show all'}</Link>
         </div>
         <Results list={list} tab={s.tab} ticketDrill={ticketDrill} vendorDrill={vendorDrill} onRetry={reloadList} />

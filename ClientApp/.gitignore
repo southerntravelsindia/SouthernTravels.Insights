@@ -6,3 +6,8 @@ blob-report/
 *.tsbuildinfo
 e2e/.auth.json
 e2e/__baseline__/
+dist/
+.env
+.env.*
+!.env.example
+e2e/.session.json

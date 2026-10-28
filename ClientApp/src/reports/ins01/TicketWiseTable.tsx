@@ -79,15 +79,14 @@ export function TicketWiseTable({ rows, drill }: { rows: TicketRow[]; drill: Dri
     { key: 'svc', header: 'Service', thClass: 'ta-c', card: 'extra', render: (t) => <span className="svc-n">{t.serviceCount}</span> },
     {
       key: 'actions', header: 'Actions', thClass: 'ta-c', align: 'center', card: 'extra',
-      render: (t) => (
+      // Downloads arrive in Phase 7; contract v0.1 has no ticket-level voucher flag yet, so the item stays disabled.
+      render: () => (
         <ActionsMenu
           items={[
             { label: 'Download Ticket' },
             { label: 'Download Itinerary' },
             { label: 'View Cost Sheet' },
-            t.isVoucherEnabled
-              ? { label: 'Download Vouchers', title: 'Download all vouchers (ZIP)' }
-              : { label: 'Download Vouchers', disabled: true, title: 'All services must be completed first' },
+            { label: 'Download Vouchers', disabled: true, title: 'All services must be completed first' },
           ]}
         />
       ),

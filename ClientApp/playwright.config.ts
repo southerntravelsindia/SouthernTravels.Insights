@@ -1,12 +1,14 @@
 import { defineConfig } from '@playwright/test';
 
-// INS-01 end-to-end and visual checks (TSD §13). They run against a signed-in local or UAT site:
-//   INS01_BASE_URL   site root, default http://localhost:5080
-//   INS01_STORAGE    a saved signed-in session (npx playwright codegen --save-storage=e2e/.auth.json <site>), git-ignored
-//   INS01_PAGE       "razor" or "react": which page the site serves (FeatureFlags:INS01_React). Run "razor" once with
-//                    --update-snapshots to record the baseline, then "react" to compare against it.
-// Uses the installed Microsoft Edge, so no browser download is needed.
+// INS-01 visual and smoke checks (TSD §13) on the installed Microsoft Edge (no browser download).
+//   INS01_PAGE      "razor": the Insights Razor page (baseline) or "react": this standalone app. Record the baseline once
+//                   with INS01_PAGE=razor and --update-snapshots, then run INS01_PAGE=react to compare.
+//   INS01_BASE_URL  site root of the page under test (Razor: the Insights site; react: this app, e.g. npm run preview)
+//   Razor needs a signed-in cookie: e2e/.auth.json (npx playwright codegen --save-storage=e2e/.auth.json <site>).
+//   React needs a session: e2e/.session.json, the value of sessionStorage "ins01.session" after signing in on the
+//   React app (DevTools → Application). Both files are git-ignored and hold a live token: delete them after the run.
 const env = (globalThis as { process?: { env: Record<string, string | undefined> } }).process?.env ?? {};
+const razor = env.INS01_PAGE === 'razor';
 
 export default defineConfig({
   testDir: './e2e',
@@ -16,8 +18,8 @@ export default defineConfig({
   reporter: [['list'], ['html', { open: 'never' }]],
   expect: { toHaveScreenshot: { maxDiffPixelRatio: 0.01, animations: 'disabled' } },
   use: {
-    baseURL: env.INS01_BASE_URL ?? 'http://localhost:5080',
-    storageState: env.INS01_STORAGE ?? 'e2e/.auth.json',
+    baseURL: env.INS01_BASE_URL ?? (razor ? 'http://localhost:5080' : 'http://localhost:4173'),
+    storageState: razor ? 'e2e/.auth.json' : undefined,
     channel: 'msedge',
     locale: 'en-IN',
     timezoneId: 'Asia/Kolkata',

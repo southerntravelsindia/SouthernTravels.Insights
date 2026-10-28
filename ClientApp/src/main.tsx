@@ -1,15 +1,18 @@
-// Entry of the INS-01 bundle (wwwroot/app/ins01.js), mounted by Views/TicketServiceStatus/IndexReact.cshtml.
+// Entry of the standalone INS-01 app (index.html). A missing build setting stops here with a clear message.
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './app/App';
-import { ROOT_ID } from './app/config';
+import { config, ConfigError } from './app/config';
 import './styles/index.css';
 
-const el = document.getElementById(ROOT_ID);
-if (el) {
-  createRoot(el).render(
+const root = createRoot(document.getElementById('root')!);
+try {
+  config();
+  root.render(
     <StrictMode>
       <App />
     </StrictMode>,
   );
+} catch (e) {
+  root.render(<p role="alert">{e instanceof ConfigError ? e.message : 'The app could not start.'}</p>);
 }

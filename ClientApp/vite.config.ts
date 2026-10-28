@@ -1,43 +1,39 @@
+import { loadEnv } from 'vite';
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 
-// The ASP.NET Core BFF from `dotnet run` (Properties/launchSettings.json).
-const bff = 'http://localhost:5080';
-
-export default defineConfig({
-  plugins: [react()],
-  // Relative URLs, so the bundle also works when the site runs under an IIS virtual directory.
-  base: './',
-  build: {
-    outDir: '../wwwroot/app',
-    emptyOutDir: true,
-    target: 'es2022',
-    rolldownOptions: {
-      // Fixed entry names (ins01.js / ins01.css): the Razor shell links them with asp-append-version for cache busting.
-      input: { ins01: 'src/main.tsx' },
-      output: {
-        entryFileNames: '[name].js',
-        chunkFileNames: 'chunks/[name]-[hash].js',
-        assetFileNames: '[name][extname]',
-      },
+// Standalone INS-01 app: a static site that calls STPLCostSheetAPI directly (no .NET host).
+// Settings come from .env files (git-ignored; see .env.example):
+//   VITE_API_BASE_URL      STPLCostSheetAPI base the browser calls, ending in "/" (read at build time, src/app/config.ts)
+//   VITE_BASE_PATH         path the site is served under, default "/"
+//   STPL_API_PROXY_TARGET  dev server only: where /stpl-api/ is forwarded, so local development needs no CORS
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, '.', '');
+  return {
+    plugins: [react()],
+    base: env.VITE_BASE_PATH || '/',
+    // site.css is imported unchanged and has one invalid rule (site.css:709 "@@media", Balance Pending report) that
+    // browsers skip; let the minifier skip it the same way rather than editing a stylesheet the other reports use.
+    css: { lightningcss: { errorRecovery: true } },
+    build: {
+      outDir: 'dist',
+      emptyOutDir: true,
+      target: 'es2022',
     },
-  },
-  server: {
-    port: 5173,
-    strictPort: true,
-    // tokens.css is imported as is from the site (D1); nothing else outside ClientApp is served.
-    fs: { allow: ['.', '../wwwroot/css'] },
-    // Standalone dev page (index.html): data calls and the site's own CSS go to the BFF. Sign in on the BFF first;
-    // the session cookie is shared because both run on localhost.
-    proxy: {
-      '/api/ins01': bff,
-      '/css': bff,
-      '/img': bff,
+    server: {
+      port: 5173,
+      strictPort: true,
+      // tokens.css, site.css, login.css and the logo are imported unchanged from the Insights site (D1).
+      fs: { allow: ['.', '../wwwroot/css', '../wwwroot/img'] },
+      proxy: env.STPL_API_PROXY_TARGET
+        ? { '/stpl-api': { target: env.STPL_API_PROXY_TARGET, changeOrigin: true, rewrite: (p) => p.replace(/^\/stpl-api/, '') } }
+        : undefined,
     },
-  },
-  test: {
-    environment: 'jsdom',
-    include: ['tests/**/*.test.{ts,tsx}'],
-    css: false,
-  },
+    test: {
+      environment: 'jsdom',
+      include: ['tests/**/*.test.{ts,tsx}'],
+      css: false,
+      env: { VITE_API_BASE_URL: 'https://api.test/' },
+    },
+  };
 });

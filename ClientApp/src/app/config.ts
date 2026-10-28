@@ -1,25 +1,23 @@
-// Display text and URLs the Razor shell writes on the mount element (Views/TicketServiceStatus/IndexReact.cshtml).
-// Nothing here is used for identity or access: the BFF decides that from the server session.
+// The app's only settings, read once from the build environment (.env files, see .env.example) and checked here,
+// so a missing value stops the app with a clear message instead of failing on the first call.
 
-export interface PageConfig {
-  title: string;
-  description: string;
-  /** Name in the "Files assigned to you" legend. */
-  userName: string;
-  /** BFF base, e.g. "/api/ins01/" (honours a virtual directory). */
-  apiBase: string;
-  loginUrl: string;
+export interface AppConfig {
+  /** STPLCostSheetAPI base, ending in "/" (absolute, or a same-origin path such as /stpl-api/ behind a proxy). */
+  apiBaseUrl: string;
 }
 
-export const ROOT_ID = 'ins01-root';
+export class ConfigError extends Error {}
 
-export function pageConfig(): PageConfig {
-  const d = document.getElementById(ROOT_ID)?.dataset ?? {};
-  return {
-    title: d.title ?? 'Ticket & Service Status',
-    description: d.description ?? '',
-    userName: d.user ?? '',
-    apiBase: d.api ?? '/api/ins01/',
-    loginUrl: d.login ?? '/Account/Login',
-  };
+export function loadConfig(env: Record<string, string | undefined> = import.meta.env): AppConfig {
+  const api = (env.VITE_API_BASE_URL ?? '').trim();
+  if (!api || api === '__SET_ON_SERVER__') throw new ConfigError('VITE_API_BASE_URL is not set for this build.');
+  if (!api.endsWith('/')) throw new ConfigError('VITE_API_BASE_URL must end with "/".');
+  if (!/^(https?:\/\/[^/]+\/|\/)/.test(api)) throw new ConfigError('VITE_API_BASE_URL must be an http(s) URL or a path starting with "/".');
+  return { apiBaseUrl: api };
+}
+
+let cached: AppConfig | null = null;
+
+export function config(): AppConfig {
+  return (cached ??= loadConfig());
 }

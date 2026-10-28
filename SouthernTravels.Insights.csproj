@@ -21,35 +21,11 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
 
-  <!--
-    INS-01 React page (TSD §2.2). ClientApp/ is the Vite + React source, built into wwwroot/app/ (git-ignored).
-    tests/ holds the xUnit project. Neither is compiled or published as part of this app.
-  -->
-  <PropertyGroup>
-    <SpaRoot>ClientApp\</SpaRoot>
-  </PropertyGroup>
+  <!-- ClientApp/ is the standalone INS-01 React app (its own build and hosting); nothing in it belongs to this project. -->
   <ItemGroup>
-    <Compile Remove="ClientApp/**;tests/**" />
-    <Content Remove="ClientApp/**;tests/**" />
-    <None Remove="ClientApp/**;tests/**" />
+    <Compile Remove="ClientApp/**" />
+    <Content Remove="ClientApp/**" />
+    <None Remove="ClientApp/**" />
   </ItemGroup>
-
-  <!-- dotnet publish builds a fresh bundle from the lock file (H20): needs Node.js on the publishing machine. -->
-  <Target Name="PublishClientApp" AfterTargets="ComputeFilesToPublish">
-    <Exec Command="node --version" ContinueOnError="true">
-      <Output TaskParameter="ExitCode" PropertyName="NodeExitCode" />
-    </Exec>
-    <Error Condition="'$(NodeExitCode)' != '0'" Text="Node.js is required to publish (it builds the INS-01 React bundle). Install the Node.js LTS from https://nodejs.org/ and try again." />
-    <Exec WorkingDirectory="$(SpaRoot)" Command="npm ci" />
-    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build" />
-    <ItemGroup>
-      <ClientDist Include="wwwroot\app\**" />
-      <ResolvedFileToPublish Include="@(ClientDist->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
-        <RelativePath>%(ClientDist.Identity)</RelativePath>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      </ResolvedFileToPublish>
-    </ItemGroup>
-  </Target>
 
 </Project>

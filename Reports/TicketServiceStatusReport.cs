@@ -53,19 +53,6 @@ public static class TicketServiceStatusReport
 {
     private static readonly TabDef[] Tabs = { new("ticket", "Ticket-Wise View"), new("vendor", "Vendor-Wise View") };
 
-    private const string Title = "Ticket & Service Status";
-    private const string Description = "Ticket & Service Status — an employee-wise view of every ticket and its linked services. Covers OPS Activity (what's New, In Progress, or Completed per OPS user), Pending Follow-up Identification (tickets needing immediate attention), Service Completion Tracking (a closed-loop log of everything marked Completed), Branch-wise OPS Performance (activity grouped by OPS Branch), and Overall OPS Status Visibility across the board.";
-
-    /// <summary>The React page's shell (FeatureFlags:INS01_React): only what _Layout reads (report id, title, page-scroll mode).</summary>
-    public static TicketServiceStatusPage Shell(ReportQuery q) => new()
-    {
-        Id = "r1",
-        StickyHeader = true,
-        Title = Title,
-        Description = Description,
-        Query = q,
-    };
-
     /// <param name="filters">The filter dropdowns (from the Operations API); null uses the built-in lists.</param>
     public static TicketServiceStatusPage Build(ReportQuery q, IReadOnlyList<FilterDef>? filters = null)
     {
@@ -74,8 +61,8 @@ public static class TicketServiceStatusReport
         {
             Id = "r1",
             StickyHeader = true,
-            Title = Title,
-            Description = Description,
+            Title = "Ticket & Service Status",
+            Description = "Ticket & Service Status — an employee-wise view of every ticket and its linked services. Covers OPS Activity (what's New, In Progress, or Completed per OPS user), Pending Follow-up Identification (tickets needing immediate attention), Service Completion Tracking (a closed-loop log of everything marked Completed), Branch-wise OPS Performance (activity grouped by OPS Branch), and Overall OPS Status Visibility across the board.",
             Query = q,
             SearchPlaceholder = "Search MBK No., Ticket No., Passenger, File No.",
             PeriodField = "Booking Date",

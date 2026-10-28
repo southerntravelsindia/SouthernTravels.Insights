@@ -1,5 +1,6 @@
-// BFF response shapes (Models/Ins01/Ins01Models.cs, camelCase). Field meanings follow the API contract
-// docs-claude planned/contracts/INS-01.md v0.1. Money is rupees as stored; dates are "yyyy-MM-dd".
+// The page's view of the API contract docs-claude planned/contracts/INS-01.md v0.1 (TicketRow, Paging, Kpi,
+// TicketService, VendorRow, VendorService), camelCased by the mappers in data.ts. Only the fields the page uses.
+// Money is rupees as stored; dates are "yyyy-MM-dd" (a time part, if any, is ignored by format.ts).
 
 export interface Paging {
   totalCount: number;
@@ -50,8 +51,6 @@ export interface TicketRow {
   completionPct: number | null;
   pendingServices: number;
   cancelledServices: number;
-  /** Proposed (not in contract v0.1): every service voucher-ready. */
-  isVoucherEnabled: boolean;
   isMine: boolean;
   isCancelled: boolean;
 }
