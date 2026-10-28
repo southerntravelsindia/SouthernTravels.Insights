@@ -36,6 +36,12 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IOperationService, OperationService>();
 
 /* =======================
+   INS-01 REACT PAGE (behind FeatureFlags:INS01_React): BFF data and the antiforgery header its POST calls send
+======================= */
+builder.Services.AddSingleton<IIns01ReportService, Ins01SampleReportService>();
+builder.Services.AddAntiforgery(options => options.HeaderName = "X-XSRF-TOKEN");
+
+/* =======================
    RATE LIMITING (Send OTP / Validate OTP: 5 tries per minute per IP)
 ======================= */
 builder.Services.AddRateLimiter(options =>
@@ -63,6 +69,10 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+// Security headers and CSP on every response (INS-01 H9); correlation id on /api/* calls (H13).
+app.UseMiddleware<SecurityHeadersMiddleware>();
+app.UseMiddleware<CorrelationIdMiddleware>();
+
 app.UseStaticFiles();
 app.UseRouting();
 app.UseRateLimiter();
@@ -77,3 +87,6 @@ app.MapControllers();
 app.MapGet("/", () => Results.Redirect("/Operations/TicketServiceStatus"));
 
 app.Run();
+
+// Lets the xUnit project (tests/SouthernTravels.Insights.Tests) host the app with WebApplicationFactory.
+public partial class Program { }

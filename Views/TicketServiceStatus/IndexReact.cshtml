@@ -1,0 +1,15 @@
+@model TicketServiceStatusPage
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@* INS-01 React page (FeatureFlags:INS01_React, TSD §2.2). _Layout keeps the header, side menu and login; the React bundle
+   (ClientApp → wwwroot/app) renders the report inside <main>. The page reads only display text from the data attributes;
+   identity and the API token stay in the server session. Phase 4a: sample data, so the legend names the sample OPS user. *@
+<meta name="ins01-xsrf" content="@Xsrf.GetAndStoreTokens(Context).RequestToken" />
+<link rel="stylesheet" href="~/app/ins01.css" asp-append-version="true" />
+<div id="ins01-root" class="ins01"
+     data-title="@Model.Title"
+     data-description="@Model.Description"
+     data-user="@SampleData.Me"
+     data-api="@Url.Content("~/api/ins01/")"
+     data-login="@Url.Content("~/Account/Login")"></div>
+<noscript><div class="results"><div class="card"><div class="empty">Enable JavaScript to see the Ticket &amp; Service Status report.</div></div></div></noscript>
+<script type="module" src="~/app/ins01.js" asp-append-version="true"></script>

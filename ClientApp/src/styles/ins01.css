@@ -1,0 +1,74 @@
+/* =====================================================================
+   INS-01 Ticket & Service Status (React). Everything is scoped under .ins01 (the mount element) so nothing here can
+   reach the other 14 reports. Copied from site.css: the Ticket-Wise table block and the sticky-bar block (the Razor copy
+   stays for the Razor page and the other reports, D1/D4). New: the cell classes DataTable writes instead of the
+   generated CardCss/AlignCss rules, and open/closed rows from React state instead of :has(.rx:checked).
+   ===================================================================== */
+
+/* Mount element: a column inside <main>, like the Razor page's direct children. */
+.ins01 { display: flex; flex-direction: column; flex: none; }
+
+/* ---------- Ticket-Wise table (site.css "Ticket-Wise table") ---------- */
+.ins01 .tt > thead th { background: var(--surface-header-cell); text-align: left; padding: 4px 8px; font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--color-muted); border-bottom: 1px solid var(--color-border); white-space: normal; position: sticky; top: 0; z-index: 2; }
+.ins01 .tt > tbody > tr.row.mine { background: var(--warn-bg); }
+.ins01 .tt > tbody > tr.row > td { padding: 4px 8px; vertical-align: top; text-align: center; }
+.ins01 .tt td.lead { padding: 4px 6px 4px 10px; border-left: 4px solid transparent; width: 30px; vertical-align: top; }
+.ins01 .tt tr.mine td.lead { border-left-color: var(--color-reserved-accent); }
+.ins01 .tt td.lead .stack { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.ins01 .tt td.lead .mdot { width: 6px; height: 6px; border-radius: 3px; background: transparent; }
+.ins01 .tt tr.mine td.lead .mdot { background: var(--color-reserved-accent); }
+.ins01 .tt .tno { font-size: 13px; font-weight: 700; color: var(--color-action-blue); }
+.ins01 .tt .sub { font-size: 10.5px; color: var(--color-muted); }
+.ins01 .tt .tour { font-size: 8px; color: var(--color-muted); }
+.ins01 .tt > tbody > tr.row > td.file { white-space: normal; line-height: 1.35; text-align: left; }
+.ins01 .tt > tbody > tr.row > td.fin { text-align: left; white-space: nowrap; }
+.ins01 .tt .bal { font-size: 15px; font-weight: 800; color: var(--color-danger); }
+.ins01 .tt .bal-cap { font-size: 8.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--color-danger); }
+.ins01 .tt .paid-full { font-weight: 700; color: var(--color-success); }
+.ins01 .tt .dl { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; background: var(--surface-subtable-header); color: var(--color-action-blue); }
+.ins01 .tt .dl.soon { background: var(--alert-bg); color: var(--alert-ink); }
+.ins01 .tt .dl.past { color: var(--color-muted); }
+.ins01 .tt .svc-n { display: inline-block; min-width: 20px; padding: 1px 7px; border-radius: 10px; background: var(--surface-subtable-header); color: var(--color-action-blue); font-weight: 700; font-size: 11px; }
+.ins01 .tt .act-btn { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 28px; border-radius: 4px; border: 1px solid var(--color-border); background: #fff; color: var(--color-navy); cursor: pointer; padding: 0; }
+.ins01 .tt tr.drill > td { padding: 0 0 0 28px; }
+.ins01 .tt .drill-tbl-wrap { border-left: 3px solid var(--color-action-blue); padding: 4px 8px 10px; overflow-x: auto; }
+.ins01 .svt th { background: var(--surface-subtable-header); text-align: left; padding: 3px 6px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--color-action-blue); white-space: normal; }
+.ins01 .svt td { padding: 3px 6px; white-space: normal; }
+.ins01 .svt td.name { max-width: 190px; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+
+/* ---------- Pinned bar (site.css "Ticket & Service Status: the page scrolls", SCROLL_BEHAVIOUR.md) ---------- */
+.ins01 .sticky-bar { position: sticky; top: -8px; z-index: 12; background: var(--page); padding-top: 8px; margin-top: 0; flex: none; }
+.ins01 .sticky-bar .tabs { margin-top: 0; }
+
+/* ---------- Rows opened with the chevron button (replaces tr.row:has(.rx:checked)) ---------- */
+.ins01 button.rx-l { display: inline-flex; border: 0; background: none; padding: 0; margin: 0; color: inherit; font: inherit; line-height: 0; cursor: pointer; }
+.ins01 button.rx-l:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.ins01 tr.row.open { background: var(--row-selected) !important; }
+.ins01 tr.row.open + tr.drill { display: table-row; }
+.ins01 tr.row.open .rx-l svg { transform: rotate(90deg); }
+
+/* ---------- Alignment by column heading (replaces Infrastructure/AlignCss.cs) ----------
+   Stacked lines follow the column at every width; the cell itself only on desktop (the card layout right-aligns). */
+.ins01 table > tbody > tr.row > td.al-l > div, .ins01 table > tbody > tr.row > td.al-l .ln { text-align: left !important; }
+.ins01 table > tbody > tr.row > td.al-c > div, .ins01 table > tbody > tr.row > td.al-c .ln { text-align: center !important; }
+.ins01 table > tbody > tr.row > td.al-r > div, .ins01 table > tbody > tr.row > td.al-r .ln { text-align: right !important; }
+@media (min-width: 1150px) {
+  .ins01 table > tbody > tr.row > td.al-l { text-align: left !important; }
+  .ins01 table > tbody > tr.row > td.al-c { text-align: center !important; }
+  .ins01 table > tbody > tr.row > td.al-r { text-align: right !important; }
+}
+
+/* ---------- Tablet and phone cards (replaces Infrastructure/CardCss.cs) ---------- */
+@media (max-width: 1149px) {
+  .ins01 table.cards > tbody > tr:not(.drill):not(.banner) > td[data-label]:not([colspan])::before { content: attr(data-label); }
+  .ins01 table.cards > tbody > tr.row:not(.open) > td.cx { display: none !important; }
+  .ins01 table.cards > tbody > tr.row.open + tr.drill { display: block; }
+}
+
+/* ---------- Loading and degraded states (new in React; tokens only) ---------- */
+.ins01 .ins01-shimmer { display: inline-block; width: 3em; border-radius: 4px; background: var(--rule-soft); animation: ins01-pulse 1.2s ease-in-out infinite; }
+@keyframes ins01-pulse { 50% { opacity: .45; } }
+@media (prefers-reduced-motion: reduce) { .ins01 .ins01-shimmer { animation: none; } }
+.ins01 .ins01-drill-msg { padding: 8px 4px; font-size: 11px; }
+.ins01 .ins01-kpi-note { margin: -4px 0 4px; display: flex; align-items: center; gap: 8px; }
+.ins01 .ins01-retry { margin-top: 8px; }

@@ -5,6 +5,10 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SouthernTravels.Insights", "SouthernTravels.Insights.csproj", "{144703AC-D691-4CDD-83D8-1282037FBCE3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SouthernTravels.Insights.Tests", "tests\SouthernTravels.Insights.Tests\SouthernTravels.Insights.Tests.csproj", "{F781CA4E-1B9F-45B7-A0BE-72DE5BAE88C3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,8 +31,23 @@ Global
 		{144703AC-D691-4CDD-83D8-1282037FBCE3}.Release|x64.Build.0 = Release|Any CPU
 		{144703AC-D691-4CDD-83D8-1282037FBCE3}.Release|x86.ActiveCfg = Release|Any CPU
 		{144703AC-D691-4CDD-83D8-1282037FBCE3}.Release|x86.Build.0 = Release|Any CPU
+		{F781CA4E-1B9F-45B7-A0BE-72DE5BAE88C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F781CA4E-1B9F-45B7-A0BE-72DE5BAE88C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F781CA4E-1B9F-45B7-A0BE-72DE5BAE88C3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F781CA4E-1B9F-45B7-A0BE-72DE5BAE88C3}.Debug|x64.Build.0 = Debug|Any CPU
+		{F781CA4E-1B9F-45B7-A0BE-72DE5BAE88C3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F781CA4E-1B9F-45B7-A0BE-72DE5BAE88C3}.Debug|x86.Build.0 = Debug|Any CPU
+		{F781CA4E-1B9F-45B7-A0BE-72DE5BAE88C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F781CA4E-1B9F-45B7-A0BE-72DE5BAE88C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F781CA4E-1B9F-45B7-A0BE-72DE5BAE88C3}.Release|x64.ActiveCfg = Release|Any CPU
+		{F781CA4E-1B9F-45B7-A0BE-72DE5BAE88C3}.Release|x64.Build.0 = Release|Any CPU
+		{F781CA4E-1B9F-45B7-A0BE-72DE5BAE88C3}.Release|x86.ActiveCfg = Release|Any CPU
+		{F781CA4E-1B9F-45B7-A0BE-72DE5BAE88C3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F781CA4E-1B9F-45B7-A0BE-72DE5BAE88C3} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 	EndGlobalSection
 EndGlobal
