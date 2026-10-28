@@ -1,5 +1,5 @@
 // The ten filters and four date ranges (AC21, AC22), their lists, and the contract request fields they become.
-// Lists come from Reports/GetOperationsReportFilters (the route and body the Insights site used at 56d2c67; not in the
+// Lists come from api/Reports/GetOperationsReportFilters (the route and body the Insights site used at 56d2c67; not in the
 // INS-01 contract). They are cached for the browser session and loaded with a 10 s timeout; on failure the built-in
 // lists below are used (AC26, H2). A list with no built-in ids is shown as unavailable rather than guessed.
 import { ApiError, apiCall, prop } from '../../lib/api';
@@ -128,7 +128,7 @@ export async function loadFilterLists(): Promise<{ lists: FilterLists; fallback:
   if (!s) return { lists: builtInLists(), fallback: true };
   try {
     const reply = await apiCall(
-      'Reports/GetOperationsReportFilters',
+      'api/Reports/GetOperationsReportFilters',
       { tenantID: s.tenantId, userId: s.userName, userName: s.userName, securityKey: s.token },
       undefined,
       LIST_TIMEOUT_MS,

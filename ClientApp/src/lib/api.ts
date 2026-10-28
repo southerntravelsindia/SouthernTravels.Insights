@@ -103,7 +103,7 @@ export async function apiCall(route: string, body: Record<string, unknown>, sign
   }
 }
 
-/** Login routes (no token): Account/SendOTP and Account/ValidateUserOTP. Returns the raw reply. */
+/** Login routes (no token): api/Account/SendOTP and api/Account/ValidateUserOTP. Returns the raw reply. */
 export async function accountCall(action: 'SendOTP' | 'ValidateUserOTP', body: Record<string, unknown>): Promise<unknown> {
-  return post(`Account/${action}`, body);
+  return post(`api/Account/${action}`, body);
 }

@@ -141,7 +141,7 @@ describe('filter lists (AC26)', () => {
     vi.restoreAllMocks();
   });
 
-  it('loads once per session from Reports/GetOperationsReportFilters', async () => {
+  it('loads once per session from api/Reports/GetOperationsReportFilters', async () => {
     setSession(user);
     const fetchMock = vi.fn(async () => json({ success: true, data: { TicketStatus: [{ StatusID: 6, StatusName: 'Confirmed' }] } }));
     vi.stubGlobal('fetch', fetchMock);
@@ -149,7 +149,7 @@ describe('filter lists (AC26)', () => {
     const b = await loadFilterLists();
     expect(fetchMock).toHaveBeenCalledTimes(1);
     const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
-    expect(url).toBe('https://api.test/Reports/GetOperationsReportFilters');
+    expect(url).toBe('https://api.test/api/Reports/GetOperationsReportFilters');
     expect(JSON.parse(init.body as string)).toEqual({ tenantID: 1, userId: 'test.ops', userName: 'test.ops', securityKey: 'test-jwt' });
     expect(a.lists.ts.options).toEqual([{ value: '6', text: 'Confirmed' }]);
     expect(b.lists).toEqual(a.lists);

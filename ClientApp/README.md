@@ -28,7 +28,7 @@ On Git Bash, a value such as `/stpl-api/` passed on the command line is turned i
 
 | Key | Used | Meaning |
 |---|---|---|
-| `VITE_API_BASE_URL` | build | STPLCostSheetAPI base the browser calls, ending in `/`. Absolute (`https://…/`) or a same-origin path (`/stpl-api/`) behind a reverse proxy. Checked at start-up (`src/app/config.ts`) |
+| `VITE_API_BASE_URL` | build | STPLCostSheetAPI root the browser calls, ending in `/`: the part before `/api/` (every route is `api/<Controller>/<Action>`). Absolute (`https://…/`) or a same-origin path (`/stpl-api/`) behind a reverse proxy. Checked at start-up (`src/app/config.ts`) |
 | `VITE_BASE_PATH` | build | Path the site is served under; `/` by default |
 | `STPL_API_PROXY_TARGET` | dev server | Where `npm run dev` forwards `/stpl-api/` |
 
@@ -38,7 +38,7 @@ On Git Bash, a value such as `/stpl-api/` passed on the command line is turned i
   `docs-claude/planned/contracts/INS-01.md` v0.1: POST, JSON, the user JWT as `securityKey` and the login name as
   `UserName` in the body, `MineOnly`, paging and row keys from the URL state. Replies are mapped in
   `src/reports/ins01/data.ts`. 15 s timeout; 401 → token forgotten, login page.
-- Login uses `Account/SendOTP` and `Account/ValidateUserOTP` with the bodies the Insights login sends today
+- Login uses `api/Account/SendOTP` and `api/Account/ValidateUserOTP` with the bodies the Insights login sends today
   (`Services/AccountService.cs` at `56d2c67`); **there is no contract file for them yet**.
 - The token is kept in `sessionStorage` (this tab only, cleared on logout or when the tab closes). It is readable by
   any script on the page, so the site must load no third-party scripts and must send a strict CSP.
@@ -64,13 +64,13 @@ Any static host (IIS site or virtual directory, nginx). Needed:
 | 4 Live data | KPI, lists, drill-downs and Expand All from the contract routes; Cancelled card (AC9) and "60% · 2 pending" line (AC12), both provisional; loading, empty, degraded and error states | Never run against a real API; BA Q3, Q6, Q9, Q10; UAT exit gate (ACs 3–20, 27, 31) |
 | 5 Filters | Ten multi-selects, four date ranges, search (Enter / 400 ms), Period (Today, This Week Mon–Sun, This Month default, Custom; IST), Clear filters, tablet/phone sheet with Done, everything in the URL, last view restored per browser session, filter lists cached per session with a 10 s timeout and built-in fallback, limit messages (H6) | Filter values against the real API (ids of each list, Booking Executive sent as user name, vendor ids before Phase 2b); UAT exit gate (ACs 21–26) |
 
-The filter lists come from `Reports/GetOperationsReportFilters` (body `tenantID`, `userId`, `userName`, `securityKey`, as
+The filter lists come from `api/Reports/GetOperationsReportFilters` (body `tenantID`, `userId`, `userName`, `securityKey`, as
 the Insights site sent it), which is not in the INS-01 contract. A list the API can't supply and that has no built-in ids
 (contract v0.1 gives ids only for OPS Status, Service Status and Service Type) is shown as "List unavailable".
 
 ## Before production (gates)
 
-- API: **rate limits on `Account/SendOTP` and `Account/ValidateUserOTP`** (the Insights site limited them to 5/min per
+- API: **rate limits on `api/Account/SendOTP` and `api/Account/ValidateUserOTP`** (the Insights site limited them to 5/min per
   IP; a browser app cannot) and on the INS-01 routes (TSD H7).
 - API: **"Show all" (`MineOnly=false`) is not permission-checked yet** (contract v0.1, Access Management Phase 6). Any
   user with a token can read every branch's tickets and vendor margins. Not for production users until enforced.

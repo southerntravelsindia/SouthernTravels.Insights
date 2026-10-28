@@ -2,7 +2,7 @@
 // so a missing value stops the app with a clear message instead of failing on the first call.
 
 export interface AppConfig {
-  /** STPLCostSheetAPI base, ending in "/" (absolute, or a same-origin path such as /stpl-api/ behind a proxy). */
+  /** STPLCostSheetAPI root, ending in "/": the address every route ("api/...") follows. Absolute, or a same-origin path such as /stpl-api/ behind a proxy. */
   apiBaseUrl: string;
 }
 

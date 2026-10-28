@@ -13,7 +13,7 @@ export interface UserSession {
   name: string;
   opsBranch: string;
   isAdmin: boolean;
-  /** Tenant from the login reply; Reports/GetOperationsReportFilters needs it as tenantID. */
+  /** Tenant from the login reply; api/Reports/GetOperationsReportFilters needs it as tenantID. */
   tenantId: number;
 }
 

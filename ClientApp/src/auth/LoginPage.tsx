@@ -1,5 +1,5 @@
 // OTP sign-in, the same two steps and look as the Insights login (Views/Account/Login.cshtml, wwwroot/js/login.js):
-// email → Send OTP (resend after 60 s) → 6-digit OTP → Verify & Login. The token from Account/ValidateUserOTP goes to
+// email → Send OTP (resend after 60 s) → 6-digit OTP → Verify & Login. The token from api/Account/ValidateUserOTP goes to
 // sessionStorage only. Rate limiting of these routes must be enforced by the API (the browser can't).
 import { useEffect, useState, type FormEvent } from 'react';
 import { useSearchParams } from 'react-router';

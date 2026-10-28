@@ -11,3 +11,6 @@ dist/
 .env.*
 !.env.example
 e2e/.session.json
+*.pem
+*.cer
+*.crt
