@@ -28,9 +28,9 @@ describe('URL state', () => {
   const q = (s: string) => readState(new URLSearchParams(s));
 
   it('defaults an unknown tab to Ticket-Wise and a bad page to 1', () => {
-    expect(q('')).toEqual({ tab: 'ticket', page: 1, all: false });
-    expect(q('tab=nope&page=abc')).toEqual({ tab: 'ticket', page: 1, all: false });
-    expect(q('tab=vendor&page=0&all=1')).toEqual({ tab: 'vendor', page: 1, all: true });
+    expect(q('')).toMatchObject({ tab: 'ticket', page: 1, all: false, period: 'month', q: '' });
+    expect(q('tab=nope&page=abc')).toMatchObject({ tab: 'ticket', page: 1, all: false });
+    expect(q('tab=vendor&page=0&all=1')).toMatchObject({ tab: 'vendor', page: 1, all: true });
     expect(q('page=3')).toMatchObject({ page: 3 });
   });
 

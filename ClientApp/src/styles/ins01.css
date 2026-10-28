@@ -73,6 +73,40 @@
   .ins01 table.cards > tbody > tr.row.open + tr.drill { display: block; }
 }
 
+/* ---------- Filters (Phase 5): panel shown by React state instead of #filtertoggle:checked ---------- */
+.ins01 .filters.open { display: block; }
+.ins01 .filters-head { align-items: center; gap: 10px; }
+.ins01 .ins01-lists-note { margin-right: auto; }
+.ins01 .tb-btn:disabled { opacity: .5; cursor: not-allowed; }
+.ins01 .tb-btn .badge { margin-left: 2px; }
+.ins01 .ins01-done { margin-top: 1px; }
+
+/* Multi-select: closed it looks like the Razor page's .flt select */
+.ins01 .ins01-ms { position: relative; }
+.ins01 .ins01-ms-btn { display: flex; align-items: center; justify-content: space-between; gap: 6px; width: 100%; box-sizing: border-box; font-size: 12px; font-weight: 400; text-transform: none; letter-spacing: 0; text-align: left; color: var(--color-text); padding: 5px 6px; border: 1px solid var(--color-border); border-radius: 4px; background: #fff; cursor: pointer; }
+.ins01 .ins01-ms-btn:disabled { color: var(--color-muted); background: var(--surface-readonly-field); cursor: not-allowed; }
+.ins01 .ins01-ms-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 1px; }
+.ins01 .ins01-ms-val { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ins01 .ins01-ms-val.on { color: var(--color-action-blue); font-weight: 600; }
+.ins01 .ins01-ms-pop { position: absolute; top: 100%; left: 0; z-index: 45; margin-top: 4px; width: max(100%, 220px); box-sizing: border-box; background: #fff; border: 1px solid var(--rule); border-radius: var(--radius-md); box-shadow: var(--shadow-md); padding: 6px; text-transform: none; letter-spacing: 0; font-weight: 400; }
+.ins01 .ins01-ms-find { width: 100%; box-sizing: border-box; font-size: 12px; padding: 4px 6px; margin-bottom: 4px; border: 1px solid var(--color-border); border-radius: 4px; }
+.ins01 .ins01-ms-list { max-height: 240px; overflow: auto; }
+.ins01 .ins01-ms-opt { display: flex; align-items: center; gap: 8px; padding: 5px 6px; border-radius: 4px; font-size: 12px; color: var(--color-text); cursor: pointer; }
+.ins01 .ins01-ms-opt:hover { background: var(--surface-subtable-header); }
+.ins01 .ins01-ms-opt input { margin: 0; flex: none; }
+.ins01 .ins01-ms-none { padding: 6px; font-size: 12px; color: var(--color-muted); }
+.ins01 .ins01-ms-clear { margin-top: 6px; width: 100%; }
+
+/* Date range: two native date fields in one filter cell */
+.ins01 .ins01-dr-row { display: flex; align-items: center; gap: 4px; }
+.ins01 .ins01-dr-row input { flex: 1 1 0; min-width: 0; box-sizing: border-box; font-size: 12px; font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--color-text); padding: 4px 6px; border: 1px solid var(--color-border); border-radius: 4px; background: #fff; }
+.ins01 .ins01-dr-to { font-size: 11px; font-weight: 400; text-transform: none; color: var(--color-muted); }
+
+@media (max-width: 1149px) {
+  .ins01 .ins01-ms-pop { position: static; width: auto; box-shadow: none; margin-top: 6px; }
+  .ins01 .ins01-ms-btn { min-height: 36px; }
+}
+
 /* ---------- Loading and degraded states (new in React; tokens only) ---------- */
 .ins01 .ins01-shimmer { display: inline-block; width: 3em; border-radius: 4px; background: var(--rule-soft); animation: ins01-pulse 1.2s ease-in-out infinite; }
 @keyframes ins01-pulse { 50% { opacity: .45; } }

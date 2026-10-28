@@ -13,6 +13,8 @@ export interface UserSession {
   name: string;
   opsBranch: string;
   isAdmin: boolean;
+  /** Tenant from the login reply; Reports/GetOperationsReportFilters needs it as tenantID. */
+  tenantId: number;
 }
 
 function storage(): Storage | null {
@@ -38,8 +40,11 @@ export function setSession(s: UserSession): void {
   storage()?.setItem(KEY, JSON.stringify(s));
 }
 
+/** Sign-out: the token and everything kept for this user (filter lists, last report view). */
 export function clearSession(): void {
-  storage()?.removeItem(KEY);
+  const s = storage();
+  if (!s) return;
+  for (const k of Object.keys(s)) if (k === KEY || k.startsWith('ins01.')) s.removeItem(k);
 }
 
 /** Path to the login page that brings the user back to `back` (a path inside this app) after sign-in. */

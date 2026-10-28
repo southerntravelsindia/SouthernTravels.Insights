@@ -68,6 +68,7 @@ export default function LoginPage() {
         name: prop<string>(user, 'name') || userName,
         opsBranch: prop<string>(user, 'opsBranch') ?? '',
         isAdmin: prop<boolean>(user, 'isAdmin') === true,
+        tenantId: Number(prop(user, 'tenantId') ?? 0) || 0,
       });
       // Full page load, so the report starts with only its own styles.
       window.location.replace(import.meta.env.BASE_URL.replace(/\/$/, '') + safeReturnTo(params.get('returnTo')));

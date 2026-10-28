@@ -119,6 +119,14 @@ export function typeTone(type: string): string {
   }
 }
 
+/**
+ * OPS Status third line (AC12, TSD §2.1): "60% · 2 pending" from the API's CompletionPct and PendingServices; empty when
+ * the API sends no percentage (no non-cancelled service). Provisional until BA Q6 (rounding, cancelled, placement).
+ */
+export function completionText(pct: number | null | undefined, pending: number): string {
+  return pct == null ? '' : `${pct}% · ${pending} pending`;
+}
+
 /** "Showing 1–10 of 45", with an optional noun, or "No results". */
 export function showing(from: number, to: number, total: number, unit = ''): string {
   return total > 0 ? `Showing ${from}–${to} of ${total}${unit ? ` ${unit}` : ''}` : 'No results';

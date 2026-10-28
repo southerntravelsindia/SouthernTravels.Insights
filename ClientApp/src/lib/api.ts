@@ -43,7 +43,7 @@ function toLogin(): void {
   window.location.assign(`${base}${loginPath(inApp + window.location.search)}&expired=1`);
 }
 
-async function post(route: string, body: unknown, signal?: AbortSignal): Promise<unknown> {
+async function post(route: string, body: unknown, signal?: AbortSignal, timeoutMs = TIMEOUT_MS): Promise<unknown> {
   let res: Response;
   try {
     res = await fetch(config().apiBaseUrl + route, {
@@ -51,7 +51,7 @@ async function post(route: string, body: unknown, signal?: AbortSignal): Promise
       headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-Correlation-ID': correlationId },
       body: JSON.stringify(body),
       credentials: 'omit', // the token travels in the body as the contract asks; no cookies cross to the API
-      signal: AbortSignal.any([AbortSignal.timeout(TIMEOUT_MS), ...(signal ? [signal] : [])]),
+      signal: AbortSignal.any([AbortSignal.timeout(timeoutMs), ...(signal ? [signal] : [])]),
     });
   } catch (e) {
     if (signal?.aborted) throw e;
@@ -87,8 +87,13 @@ export async function reportCall<T>(route: string, body: Record<string, unknown>
     toLogin();
     throw new ApiError('Please sign in.', 401, correlationId);
   }
+  return unwrap<T>(await apiCall(`api/TicketServiceStatus/${route}`, { ...body, securityKey: s.token, UserName: s.userName }, signal));
+}
+
+/** A signed-in call whose body the caller builds (it carries the token itself); 401 → login. Returns the raw reply. */
+export async function apiCall(route: string, body: Record<string, unknown>, signal?: AbortSignal, timeoutMs = TIMEOUT_MS): Promise<unknown> {
   try {
-    return unwrap<T>(await post(`api/TicketServiceStatus/${route}`, { ...body, securityKey: s.token, UserName: s.userName }, signal));
+    return await post(route, body, signal, timeoutMs);
   } catch (e) {
     if (e instanceof ApiError && e.status === 401) {
       toLogin();

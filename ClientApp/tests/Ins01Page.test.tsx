@@ -62,7 +62,8 @@ describe('Ins01Page (STPLCostSheetAPI direct)', () => {
     await screen.findByText('GRP1001');
     const list = calls.find((c) => c.url.endsWith('GetTicketWiseList'))!;
     expect(list.url).toBe('https://api.test/api/TicketServiceStatus/GetTicketWiseList');
-    expect(list.body).toEqual({ MineOnly: false, PageNumber: 2, PageSize: 10, securityKey: 'test-jwt', UserName: 'test.ops' });
+    expect(list.body).toMatchObject({ MineOnly: false, PageNumber: 2, PageSize: 10, securityKey: 'test-jwt', UserName: 'test.ops' });
+    expect(Object.keys(list.body).sort()).toEqual(['MineOnly', 'PageNumber', 'PageSize', 'PeriodFrom', 'PeriodTo', 'UserName', 'securityKey']);
     expect(list.init.method).toBe('POST');
     expect(list.init.credentials).toBe('omit');
     expect((list.init.headers as Record<string, string>)['X-Correlation-ID']).toBe(correlationId);

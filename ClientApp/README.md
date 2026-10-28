@@ -57,6 +57,17 @@ Any static host (IIS site or virtual directory, nginx). Needed:
    - **Same-origin reverse proxy** (`/stpl-api/` → API on the same host name): no CORS change, set
      `VITE_API_BASE_URL=/stpl-api/`.
 
+## Status against TSD INS-01 (28 Oct 2026)
+
+| Phase | Built | Open |
+|---|---|---|
+| 4 Live data | KPI, lists, drill-downs and Expand All from the contract routes; Cancelled card (AC9) and "60% · 2 pending" line (AC12), both provisional; loading, empty, degraded and error states | Never run against a real API; BA Q3, Q6, Q9, Q10; UAT exit gate (ACs 3–20, 27, 31) |
+| 5 Filters | Ten multi-selects, four date ranges, search (Enter / 400 ms), Period (Today, This Week Mon–Sun, This Month default, Custom; IST), Clear filters, tablet/phone sheet with Done, everything in the URL, last view restored per browser session, filter lists cached per session with a 10 s timeout and built-in fallback, limit messages (H6) | Filter values against the real API (ids of each list, Booking Executive sent as user name, vendor ids before Phase 2b); UAT exit gate (ACs 21–26) |
+
+The filter lists come from `Reports/GetOperationsReportFilters` (body `tenantID`, `userId`, `userName`, `securityKey`, as
+the Insights site sent it), which is not in the INS-01 contract. A list the API can't supply and that has no built-in ids
+(contract v0.1 gives ids only for OPS Status, Service Status and Service Type) is shown as "List unavailable".
+
 ## Before production (gates)
 
 - API: **rate limits on `Account/SendOTP` and `Account/ValidateUserOTP`** (the Insights site limited them to 5/min per

@@ -5,6 +5,7 @@ import LoginPage from '../src/auth/LoginPage';
 import { loadConfig } from '../src/app/config';
 import { getSession, safeReturnTo } from '../src/lib/auth';
 import { fetchTicketServices, mapTicket } from '../src/reports/ins01/data';
+import { readState } from '../src/lib/urlState';
 import { envelope, ticket, user } from './fixtures';
 import { setSession } from '../src/lib/auth';
 
@@ -52,7 +53,7 @@ describe('data', () => {
       return json(envelope({ Services: keys.map((k) => ({ ServiceRowId: k, TicketRowKey: k })) }));
     }));
     const keys = Array.from({ length: 230 }, (_, i) => i + 1);
-    const byKey = await fetchTicketServices(keys, false, new AbortController().signal);
+    const byKey = await fetchTicketServices(keys, readState(new URLSearchParams()), new AbortController().signal);
     expect(sizes).toEqual([100, 100, 30]);
     expect(byKey.size).toBe(230);
   });

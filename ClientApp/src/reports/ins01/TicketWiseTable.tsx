@@ -39,7 +39,16 @@ export function TicketWiseTable({ rows, drill }: { rows: TicketRow[]; drill: Dri
     },
     {
       key: 'ops', header: 'OPS Status', align: 'center',
-      render: (t) => <><Badge status={t.opsStatus} className="nw" /><div className="sub mt3">{f.list(t.opsBranchCodes, ' / ')}</div></>,
+      render: (t) => {
+        const done = f.completionText(t.completionPct, t.pendingServices);
+        return (
+          <>
+            <Badge status={t.opsStatus} className="nw" />
+            <div className="sub mt3">{f.list(t.opsBranchCodes, ' / ')}</div>
+            {done && <div className="sub ins01-done">{done}</div>}
+          </>
+        );
+      },
     },
     {
       key: 'period', header: 'Tour Period', thClass: 'ta-c', tdClass: 'fs11', align: 'center',

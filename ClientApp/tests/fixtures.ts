@@ -1,7 +1,7 @@
 // Synthetic STPLCostSheetAPI replies (contract INS-01 v0.1 shapes, PascalCase). No real customers.
 import type { UserSession } from '../src/lib/auth';
 
-export const user: UserSession = { token: 'test-jwt', userName: 'test.ops', name: 'Test Ops', opsBranch: 'DEL001', isAdmin: false };
+export const user: UserSession = { token: 'test-jwt', userName: 'test.ops', name: 'Test Ops', opsBranch: 'DEL001', isAdmin: false, tenantId: 1 };
 
 export const envelope = (Data: unknown) => ({ Success: true, Message: 'ok', Data });
 

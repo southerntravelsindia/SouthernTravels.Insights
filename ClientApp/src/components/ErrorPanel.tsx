@@ -5,7 +5,7 @@ export function ErrorPanel({ message, traceId, onRetry }: { message: string; tra
     <div className="card" role="alert">
       <div className="empty">
         <div className="c-warn fw7">{message}</div>
-        <div className="fs11 mt3">Reference: {traceId}</div>
+        {traceId && <div className="fs11 mt3">Reference: {traceId}</div>}
         {onRetry && <button type="button" className="btn-clear mt3 ins01-retry" onClick={onRetry}>Retry</button>}
       </div>
     </div>

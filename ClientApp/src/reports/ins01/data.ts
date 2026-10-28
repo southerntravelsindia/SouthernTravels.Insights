@@ -4,6 +4,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ApiError, reportCall } from '../../lib/api';
 import type { Ins01State } from '../../lib/urlState';
+import { filterBody, serviceFilterBody } from './filters';
 import type { Kpi, ListPage, Paging, TicketRow, TicketService, VendorRow, VendorService } from './types';
 
 /** Rows per page (contract: 1–100, default 10; the Razor page shows 10). */
@@ -127,12 +128,12 @@ export const mapVendorService = (x: Api): VendorService => ({
   confirmationDate: strOrNull(x.ConfirmationDate),
 });
 
-// Request bodies send only the URL state; securityKey and UserName are added by reportCall from the session.
+// Request bodies carry only the URL state (filters.ts); securityKey and UserName are added by reportCall from the session.
 
 export const fetchKpi = async (s: Ins01State, signal?: AbortSignal) =>
-  mapKpi(await reportCall<Api>('GetTicketWiseKpi', { MineOnly: !s.all }, signal));
+  mapKpi(await reportCall<Api>('GetTicketWiseKpi', filterBody(s), signal));
 
-const listBody = (s: Ins01State) => ({ MineOnly: !s.all, PageNumber: s.page, PageSize: PAGE_SIZE });
+const listBody = (s: Ins01State) => ({ ...filterBody(s), PageNumber: s.page, PageSize: PAGE_SIZE });
 
 export async function fetchTickets(s: Ins01State, signal?: AbortSignal): Promise<ListPage<TicketRow>> {
   const d = await reportCall<Api>('GetTicketWiseList', listBody(s), signal);
@@ -157,17 +158,19 @@ async function batched<S>(keys: number[], one: (chunk: number[]) => Promise<S[]>
   return byKey((await Promise.all(chunks.map(one))).flat(), key);
 }
 
-export const fetchTicketServices = (keys: number[], showAll: boolean, signal: AbortSignal) =>
+/** Ticket drill-down: the list's scope, search and service-level filters (TicketServicesRequest). */
+export const fetchTicketServices = (keys: number[], s: Ins01State, signal: AbortSignal) =>
   batched(
     keys,
-    async (chunk) => rows(await reportCall<Api>('GetTicketWiseServices', { TicketRowKeys: chunk, MineOnly: !showAll }, signal), 'Services').map(mapTicketService),
+    async (chunk) => rows(await reportCall<Api>('GetTicketWiseServices', { ...serviceFilterBody(s), TicketRowKeys: chunk }, signal), 'Services').map(mapTicketService),
     (s) => s.ticketRowKey,
   );
 
-export const fetchVendorServices = (ids: number[], showAll: boolean, signal: AbortSignal) =>
+/** Vendor drill-down: the whole filter of the list plus the expanded vendors (VendorServicesRequest). */
+export const fetchVendorServices = (ids: number[], s: Ins01State, signal: AbortSignal) =>
   batched(
     ids,
-    async (chunk) => rows(await reportCall<Api>('GetVendorWiseServices', { ExpandedVendorIds: chunk, MineOnly: !showAll }, signal), 'Services').map(mapVendorService),
+    async (chunk) => rows(await reportCall<Api>('GetVendorWiseServices', { ...filterBody(s), ExpandedVendorIds: chunk }, signal), 'Services').map(mapVendorService),
     (x) => x.vendorId,
   );
 
