@@ -37,9 +37,13 @@ On Git Bash, a value such as `/stpl-api/` passed on the command line is turned i
 - `src/lib/api.ts` is the only client. INS-01 routes (`api/TicketServiceStatus/*`) follow
   `docs-claude/planned/contracts/INS-01.md` v0.1: POST, JSON, the user JWT as `securityKey` and the login name as
   `UserName` in the body, `MineOnly`, paging and row keys from the URL state. Replies are mapped in
-  `src/reports/ins01/data.ts`. 15 s timeout; 401 → token forgotten, login page.
-- Login uses `api/Account/SendOTP` and `api/Account/ValidateUserOTP` with the bodies the Insights login sends today
-  (`Services/AccountService.cs` at `56d2c67`); **there is no contract file for them yet**.
+  `src/reports/ins01/data.ts`, reading field names case-insensitively: the contract documents PascalCase, the API as
+  built sends ASP.NET Core's default camelCase. 15 s timeout; 401 → token forgotten, login page.
+- Login uses `api/Account/SendOTP` and `api/Account/ValidateUserOTP` with `EmailId` (and `OTPCode`) only; **there is no
+  contract file for them yet**. The browser can't send `UserIP`, so the API must accept it as optional and record the
+  address it sees (change on STPLCostSheetAPI branch `feat/claude-ins-01-cors`).
+- "Mine only" matches tickets on the `UserName` that `usp_ValidateUserOTP` returns for the login (the token's name
+  claim) against the booking executive and the executives assigned to services.
 - The token is kept in `sessionStorage` (this tab only, cleared on logout or when the tab closes). It is readable by
   any script on the page, so the site must load no third-party scripts and must send a strict CSP.
 
