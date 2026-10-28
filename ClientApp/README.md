@@ -30,6 +30,7 @@ On Git Bash, a value such as `/stpl-api/` passed on the command line is turned i
 |---|---|---|
 | `VITE_API_BASE_URL` | build | STPLCostSheetAPI root the browser calls, ending in `/`: the part before `/api/` (every route is `api/<Controller>/<Action>`). Absolute (`https://…/`) or a same-origin path (`/stpl-api/`) behind a reverse proxy. Checked at start-up (`src/app/config.ts`) |
 | `VITE_BASE_PATH` | build | Path the site is served under; `/` by default |
+| `VITE_INSIGHTS_URL` | build, optional | Root of the Insights site that hosts the other 14 reports. The side menu links them as `<root>Operations/<Report>?pick=1`; when empty they are shown disabled |
 | `STPL_API_PROXY_TARGET` | dev server | Where `npm run dev` forwards `/stpl-api/` |
 
 ## How it talks to the API
