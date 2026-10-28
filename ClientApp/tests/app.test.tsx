@@ -84,6 +84,14 @@ describe('LoginPage', () => {
     expect(replace).toHaveBeenCalledWith('/ticket-service-status?tab=vendor');
   });
 
+  it('shows the API\'s own message when Send OTP is refused with 400', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => json({ Success: false, Message: 'Please enter a valid Email Id or 10 digit Mobile No.' }, 400)));
+    render(<MemoryRouter initialEntries={['/login']}><LoginPage /></MemoryRouter>);
+    fireEvent.change(screen.getByLabelText(/Email address/), { target: { value: 'x@y' } });
+    await act(async () => fireEvent.click(screen.getByRole('button', { name: 'Send OTP' })));
+    expect(screen.getByText('Please enter a valid Email Id or 10 digit Mobile No.')).toBeTruthy();
+  });
+
   it('rejects an OTP that is not 6 digits without calling the API', async () => {
     const fetchMock = vi.fn(async () => json({ success: true }));
     vi.stubGlobal('fetch', fetchMock);

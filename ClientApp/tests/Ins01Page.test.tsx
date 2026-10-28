@@ -56,6 +56,27 @@ describe('Ins01Page (STPLCostSheetAPI direct)', () => {
     expect(document.querySelector('tr.row.mine')).not.toBeNull();
   });
 
+  it('reads the camelCase replies the API actually sends (ASP.NET Core default), not only the contract PascalCase', async () => {
+    // System.Text.Json camelCase: lower-case the leading capitals, keeping the last one before a lower-case letter.
+    const camelName = (k: string) => k.replace(/^[A-Z]+(?=[A-Z][a-z]|$)|^[A-Z]/, (m) => m.toLowerCase());
+    const camel = (v: unknown): unknown =>
+      Array.isArray(v) ? v.map(camel)
+        : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).map(([k, x]) => [camelName(k), camel(x)]))
+          : v;
+    expect(camelName('MBKNo')).toBe('mbkNo');
+    expect(camelName('TicketRowKey')).toBe('ticketRowKey');
+    handler = (route, body) => {
+      const r = ok(route, body);
+      return route.startsWith('GetTicketWise') ? json(camel(JSON.parse(JSON.stringify(envelope(
+        route === 'GetTicketWiseKpi' ? kpi : { Rows: [ticket(1)], Paging: paging(1) }))))) : r;
+    };
+    renderAt('/ticket-service-status');
+    expect(await screen.findByText('GRP1001')).toBeTruthy();
+    expect(screen.getByText('MBK-TEST-1')).toBeTruthy();
+    expect(screen.getByText('4.5 days')).toBeTruthy();
+    expect(screen.getByText('Showing 1–1 of 1')).toBeTruthy();
+  });
+
   it('sends the contract body: token and user name from the session, scope and page from the URL', async () => {
     handler = ok;
     renderAt('/ticket-service-status?tab=ticket&page=2&all=1');

@@ -1,8 +1,8 @@
 // INS-01 calls to STPLCostSheetAPI (api/TicketServiceStatus/*), built only from the contract docs-claude
-// planned/contracts/INS-01.md v0.1. The API answers in PascalCase; the mappers below turn its DTOs into the page's types
+// planned/contracts/INS-01.md v0.1. Reply field names are read case-insensitively (see ci); the mappers turn the DTOs into the page's types
 // and pass every value through unchanged (calculations are the API's, display rules are format.ts).
 import { useEffect, useRef, useState } from 'react';
-import { ApiError, reportCall } from '../../lib/api';
+import { ApiError, prop, reportCall } from '../../lib/api';
 import type { Ins01State } from '../../lib/urlState';
 import { filterBody, serviceFilterBody } from './filters';
 import type { Kpi, ListPage, Paging, TicketRow, TicketService, VendorRow, VendorService } from './types';
@@ -17,7 +17,16 @@ const str = (v: unknown) => (v == null ? '' : String(v));
 const num = (v: unknown) => (typeof v === 'number' ? v : Number(v ?? 0) || 0);
 const numOrNull = (v: unknown) => (v == null || v === '' ? null : Number(v));
 const strOrNull = (v: unknown) => (v == null || v === '' ? null : String(v));
-const rows = (d: unknown, key: string): Api[] => ((d as Api | null)?.[key] as Api[] | undefined) ?? [];
+/**
+ * A case-insensitive view of one reply object. Contract v0.1 documents PascalCase (TicketRowKey) but the API as built
+ * serialises with ASP.NET Core's default camelCase (ticketRowKey); the mappers read the contract names either way.
+ */
+const ci = (o: unknown): Api =>
+  new Proxy(o && typeof o === 'object' ? (o as Api) : {}, { get: (t, k) => (typeof k === 'string' ? prop(t, k) : undefined) });
+const rows = (d: unknown, key: string): Api[] => {
+  const list = prop<unknown>(d, key);
+  return Array.isArray(list) ? list.map(ci) : [];
+};
 
 const mapPaging = (p: Api | undefined): Paging => ({
   totalCount: num(p?.TotalCount),
@@ -131,18 +140,18 @@ export const mapVendorService = (x: Api): VendorService => ({
 // Request bodies carry only the URL state (filters.ts); securityKey and UserName are added by reportCall from the session.
 
 export const fetchKpi = async (s: Ins01State, signal?: AbortSignal) =>
-  mapKpi(await reportCall<Api>('GetTicketWiseKpi', filterBody(s), signal));
+  mapKpi(ci(await reportCall<Api>('GetTicketWiseKpi', filterBody(s), signal)));
 
 const listBody = (s: Ins01State) => ({ ...filterBody(s), PageNumber: s.page, PageSize: PAGE_SIZE });
 
 export async function fetchTickets(s: Ins01State, signal?: AbortSignal): Promise<ListPage<TicketRow>> {
   const d = await reportCall<Api>('GetTicketWiseList', listBody(s), signal);
-  return { rows: rows(d, 'Rows').map(mapTicket), paging: mapPaging(d?.Paging as Api) };
+  return { rows: rows(d, 'Rows').map(mapTicket), paging: mapPaging(ci(prop(d, 'Paging'))) };
 }
 
 export async function fetchVendors(s: Ins01State, signal?: AbortSignal): Promise<ListPage<VendorRow>> {
   const d = await reportCall<Api>('GetVendorWiseList', listBody(s), signal);
-  return { rows: rows(d, 'Rows').map(mapVendor), paging: mapPaging(d?.Paging as Api) };
+  return { rows: rows(d, 'Rows').map(mapVendor), paging: mapPaging(ci(prop(d, 'Paging'))) };
 }
 
 function byKey<S>(items: S[], key: (s: S) => number): Map<number, S[]> {

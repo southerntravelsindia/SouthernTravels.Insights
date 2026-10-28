@@ -32,7 +32,9 @@ export default function LoginPage() {
   }, [wait]);
 
   const show = (err: string, inf = '') => { setError(err); setInfo(inf); };
-  const failText = (e: unknown, fallback: string) => (e instanceof ApiError && e.status === 0 ? e.message : fallback);
+  // Network failures and the API's own 400 text ("Please enter a valid Email Id…") are shown; anything else is generic.
+  const failText = (e: unknown, fallback: string) =>
+    e instanceof ApiError && (e.status === 0 || e.status === 400) ? e.message : fallback;
 
   async function sendOtp() {
     const value = email.trim();
