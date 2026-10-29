@@ -1,0 +1,13 @@
+{
+    "kitVersion":  "2.1.8",
+    "app":  "Insights-Panel",
+    "stack":  "node",
+    "packs":  [
+                  "reports"
+              ],
+    "docs":  "../../docs-claude",
+    "repos":  "..",
+    "sqlDir":  "Database/Changes",
+    "branchConvention":  "\u003ctype\u003e/claude-\u003cticket\u003e-\u003cshort-name\u003e  (type: feat, fix, chore, docs; e.g. feat/claude-ins-02-ops-workload). Branches created from a Claude session carry the claude- marker; the guard hook enforces it",
+    "installedOn":  "2026-10-28"
+}

@@ -1,0 +1,117 @@
+/* =====================================================================
+   INS-01 Ticket & Service Status (React). Everything is scoped under .ins01 (the mount element) so nothing here can
+   leak into anything else. Copied from site.css: the Ticket-Wise table block and the sticky-bar block (site.css itself
+   stays unchanged in styles/insights/, D1). New: the cell classes DataTable writes instead of the
+   generated CardCss/AlignCss rules, and open/closed rows from React state instead of :has(.rx:checked).
+   ===================================================================== */
+
+/* Side menu (Views/Shared/_Layout.cshtml at 56d2c67). site.css styles it from #navtoggle as before; the Razor page used
+   labels and links where this app uses buttons, so the buttons lose the browser's own button look. */
+.ins01-app .sidebar .toggle, .ins01-app .scrim, .ins01-app .sidebar .nav-user .logout { font: inherit; }
+.ins01-app .scrim { border: 0; padding: 0; margin: 0; }
+.ins01-app .sidebar .nav-user .logout { border: 0; background: none; padding: 0; cursor: pointer; }
+.ins01-app .sidebar .nav.ins01-nav-off { opacity: .5; cursor: not-allowed; }
+.ins01-app .hamburger:focus-visible, .ins01-app .sidebar .toggle:focus-visible, .ins01-app .sidebar .nav:focus-visible,
+.ins01-app .sidebar .nav-user .logout:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: -2px; }
+
+/* Mount element: a column inside <main>, like the Razor page's direct children. */
+.ins01 { display: flex; flex-direction: column; flex: none; }
+
+/* ---------- Ticket-Wise table (site.css "Ticket-Wise table") ---------- */
+.ins01 .tt > thead th { background: var(--surface-header-cell); text-align: left; padding: 4px 8px; font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--color-muted); border-bottom: 1px solid var(--color-border); white-space: normal; position: sticky; top: 0; z-index: 2; }
+.ins01 .tt > tbody > tr.row.mine { background: var(--warn-bg); }
+.ins01 .tt > tbody > tr.row > td { padding: 4px 8px; vertical-align: top; text-align: center; }
+.ins01 .tt td.lead { padding: 4px 6px 4px 10px; border-left: 4px solid transparent; width: 30px; vertical-align: top; }
+.ins01 .tt tr.mine td.lead { border-left-color: var(--color-reserved-accent); }
+.ins01 .tt td.lead .stack { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.ins01 .tt td.lead .mdot { width: 6px; height: 6px; border-radius: 3px; background: transparent; }
+.ins01 .tt tr.mine td.lead .mdot { background: var(--color-reserved-accent); }
+.ins01 .tt .tno { font-size: 13px; font-weight: 700; color: var(--color-action-blue); }
+.ins01 .tt .sub { font-size: 10.5px; color: var(--color-muted); }
+.ins01 .tt .tour { font-size: 8px; color: var(--color-muted); }
+.ins01 .tt > tbody > tr.row > td.file { white-space: normal; line-height: 1.35; text-align: left; }
+.ins01 .tt > tbody > tr.row > td.fin { text-align: left; white-space: nowrap; }
+.ins01 .tt .bal { font-size: 15px; font-weight: 800; color: var(--color-danger); }
+.ins01 .tt .bal-cap { font-size: 8.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--color-danger); }
+.ins01 .tt .paid-full { font-weight: 700; color: var(--color-success); }
+.ins01 .tt .dl { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; background: var(--surface-subtable-header); color: var(--color-action-blue); }
+.ins01 .tt .dl.soon { background: var(--alert-bg); color: var(--alert-ink); }
+.ins01 .tt .dl.past { color: var(--color-muted); }
+.ins01 .tt .svc-n { display: inline-block; min-width: 20px; padding: 1px 7px; border-radius: 10px; background: var(--surface-subtable-header); color: var(--color-action-blue); font-weight: 700; font-size: 11px; }
+.ins01 .tt .act-btn { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 28px; border-radius: 4px; border: 1px solid var(--color-border); background: #fff; color: var(--color-navy); cursor: pointer; padding: 0; }
+.ins01 .tt tr.drill > td { padding: 0 0 0 28px; }
+.ins01 .tt .drill-tbl-wrap { border-left: 3px solid var(--color-action-blue); padding: 4px 8px 10px; overflow-x: auto; }
+.ins01 .svt th { background: var(--surface-subtable-header); text-align: left; padding: 3px 6px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--color-action-blue); white-space: normal; }
+.ins01 .svt td { padding: 3px 6px; white-space: normal; }
+.ins01 .svt td.name { max-width: 190px; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+
+/* ---------- Pinned bar (site.css "Ticket & Service Status: the page scrolls", SCROLL_BEHAVIOUR.md) ---------- */
+.ins01 .sticky-bar { position: sticky; top: -8px; z-index: 12; background: var(--page); padding-top: 8px; margin-top: 0; flex: none; }
+.ins01 .sticky-bar .tabs { margin-top: 0; }
+
+/* ---------- Rows opened with the chevron button (replaces tr.row:has(.rx:checked)) ---------- */
+.ins01 button.rx-l { display: inline-flex; border: 0; background: none; padding: 0; margin: 0; color: inherit; font: inherit; line-height: 0; cursor: pointer; }
+.ins01 button.rx-l:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.ins01 tr.row.open { background: var(--row-selected) !important; }
+.ins01 tr.row.open + tr.drill { display: table-row; }
+.ins01 tr.row.open .rx-l svg { transform: rotate(90deg); }
+
+/* ---------- Alignment by column heading (replaces Infrastructure/AlignCss.cs) ----------
+   Stacked lines follow the column at every width; the cell itself only on desktop (the card layout right-aligns). */
+.ins01 table > tbody > tr.row > td.al-l > div, .ins01 table > tbody > tr.row > td.al-l .ln { text-align: left !important; }
+.ins01 table > tbody > tr.row > td.al-c > div, .ins01 table > tbody > tr.row > td.al-c .ln { text-align: center !important; }
+.ins01 table > tbody > tr.row > td.al-r > div, .ins01 table > tbody > tr.row > td.al-r .ln { text-align: right !important; }
+@media (min-width: 1150px) {
+  .ins01 table > tbody > tr.row > td.al-l { text-align: left !important; }
+  .ins01 table > tbody > tr.row > td.al-c { text-align: center !important; }
+  .ins01 table > tbody > tr.row > td.al-r { text-align: right !important; }
+}
+
+/* ---------- Tablet and phone cards (replaces Infrastructure/CardCss.cs) ---------- */
+@media (max-width: 1149px) {
+  .ins01 table.cards > tbody > tr:not(.drill):not(.banner) > td[data-label]:not([colspan])::before { content: attr(data-label); }
+  .ins01 table.cards > tbody > tr.row:not(.open) > td.cx { display: none !important; }
+  .ins01 table.cards > tbody > tr.row.open + tr.drill { display: block; }
+}
+
+/* ---------- Filters (Phase 5): panel shown by React state instead of #filtertoggle:checked ---------- */
+.ins01 .filters.open { display: block; }
+.ins01 .filters-head { align-items: center; gap: 10px; }
+.ins01 .ins01-lists-note { margin-right: auto; }
+.ins01 .tb-btn:disabled { opacity: .5; cursor: not-allowed; }
+.ins01 .tb-btn .badge { margin-left: 2px; }
+.ins01 .ins01-done { margin-top: 1px; }
+
+/* Multi-select: closed it looks like the Razor page's .flt select */
+.ins01 .ins01-ms { position: relative; }
+.ins01 .ins01-ms-btn { display: flex; align-items: center; justify-content: space-between; gap: 6px; width: 100%; box-sizing: border-box; font-size: 12px; font-weight: 400; text-transform: none; letter-spacing: 0; text-align: left; color: var(--color-text); padding: 5px 6px; border: 1px solid var(--color-border); border-radius: 4px; background: #fff; cursor: pointer; }
+.ins01 .ins01-ms-btn:disabled { color: var(--color-muted); background: var(--surface-readonly-field); cursor: not-allowed; }
+.ins01 .ins01-ms-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 1px; }
+.ins01 .ins01-ms-val { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ins01 .ins01-ms-val.on { color: var(--color-action-blue); font-weight: 600; }
+.ins01 .ins01-ms-pop { position: absolute; top: 100%; left: 0; z-index: 45; margin-top: 4px; width: max(100%, 220px); box-sizing: border-box; background: #fff; border: 1px solid var(--rule); border-radius: var(--radius-md); box-shadow: var(--shadow-md); padding: 6px; text-transform: none; letter-spacing: 0; font-weight: 400; }
+.ins01 .ins01-ms-find { width: 100%; box-sizing: border-box; font-size: 12px; padding: 4px 6px; margin-bottom: 4px; border: 1px solid var(--color-border); border-radius: 4px; }
+.ins01 .ins01-ms-list { max-height: 240px; overflow: auto; }
+.ins01 .ins01-ms-opt { display: flex; align-items: center; gap: 8px; padding: 5px 6px; border-radius: 4px; font-size: 12px; color: var(--color-text); cursor: pointer; }
+.ins01 .ins01-ms-opt:hover { background: var(--surface-subtable-header); }
+.ins01 .ins01-ms-opt input { margin: 0; flex: none; }
+.ins01 .ins01-ms-none { padding: 6px; font-size: 12px; color: var(--color-muted); }
+.ins01 .ins01-ms-clear { margin-top: 6px; width: 100%; }
+
+/* Date range: two native date fields in one filter cell */
+.ins01 .ins01-dr-row { display: flex; align-items: center; gap: 4px; }
+.ins01 .ins01-dr-row input { flex: 1 1 0; min-width: 0; box-sizing: border-box; font-size: 12px; font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--color-text); padding: 4px 6px; border: 1px solid var(--color-border); border-radius: 4px; background: #fff; }
+.ins01 .ins01-dr-to { font-size: 11px; font-weight: 400; text-transform: none; color: var(--color-muted); }
+
+@media (max-width: 1149px) {
+  .ins01 .ins01-ms-pop { position: static; width: auto; box-shadow: none; margin-top: 6px; }
+  .ins01 .ins01-ms-btn { min-height: 36px; }
+}
+
+/* ---------- Loading and degraded states (new in React; tokens only) ---------- */
+.ins01 .ins01-shimmer { display: inline-block; width: 3em; border-radius: 4px; background: var(--rule-soft); animation: ins01-pulse 1.2s ease-in-out infinite; }
+@keyframes ins01-pulse { 50% { opacity: .45; } }
+@media (prefers-reduced-motion: reduce) { .ins01 .ins01-shimmer { animation: none; } }
+.ins01 .ins01-drill-msg { padding: 8px 4px; font-size: 11px; }
+.ins01 .ins01-kpi-note { margin: -4px 0 4px; display: flex; align-items: center; gap: 8px; }
+.ins01 .ins01-retry { margin-top: 8px; }

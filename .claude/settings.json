@@ -1,0 +1,112 @@
+{
+    "permissions":  {
+                        "deny":  [
+                                     "Bash(git push)",
+                                     "Bash(git push *)",
+                                     "Bash(git reset --hard *)",
+                                     "Bash(git clean *)",
+                                     "Bash(git filter-branch *)",
+                                     "Bash(iisreset *)",
+                                     "Bash(appcmd *)",
+                                     "Bash(msdeploy *)",
+                                     "Read(**/Web.Config_live)",
+                                     "Read(**/*.pubxml)",
+                                     "Read(**/*.pubxml.user)",
+                                     "Read(**/*.pfx)",
+                                     "Read(**/*.snk)",
+                                     "Read(**/*.publishsettings)",
+                                     "Bash(npm publish)",
+                                     "Bash(npm publish *)",
+                                     "Bash(npm audit fix --force*)",
+                                     "Read(**/.env)",
+                                     "Read(**/.env.local)",
+                                     "Read(**/.env.*.local)",
+                                     "Read(**/.env.production)",
+                                     "Read(**/.env.live)",
+                                     "Read(**/.env.prod)"
+                                 ],
+                        "ask":  [
+                                    "Bash(git commit *)",
+                                    "Bash(git merge *)",
+                                    "Bash(git rebase *)",
+                                    "Bash(git checkout -- *)",
+                                    "Bash(git restore *)",
+                                    "Bash(sqlcmd *)",
+                                    "Bash(dotnet ef *)",
+                                    "Bash(dotnet publish *)",
+                                    "Bash(robocopy *)",
+                                    "Bash(npm install)",
+                                    "Bash(npm install *)",
+                                    "Bash(npm i *)",
+                                    "Bash(npm uninstall *)",
+                                    "Bash(npm update *)",
+                                    "Bash(npm audit fix*)",
+                                    "Bash(npx *)",
+                                    "Bash(yarn add *)",
+                                    "Bash(pnpm add *)"
+                                ],
+                        "allow":  [
+                                      "Bash(git status)",
+                                      "Bash(git status *)",
+                                      "Bash(git diff)",
+                                      "Bash(git diff *)",
+                                      "Bash(git log *)",
+                                      "Bash(git show *)",
+                                      "Bash(git branch)",
+                                      "Bash(git branch --show-current)",
+                                      "Bash(git blame *)",
+                                      "Bash(git switch -c *)",
+                                      "Bash(git add *)",
+                                      "Bash(dotnet restore *)",
+                                      "Bash(dotnet build *)",
+                                      "Bash(dotnet test *)",
+                                      "Bash(node --version)",
+                                      "Bash(npm --version)",
+                                      "Bash(npm ci)",
+                                      "Bash(npm ls *)",
+                                      "Bash(npm outdated)",
+                                      "Bash(npm test)",
+                                      "Bash(npm run build)",
+                                      "Bash(npm run lint)",
+                                      "Bash(npm run test *)"
+                                  ]
+                    },
+    "hooks":  {
+                  "PreToolUse":  [
+                                     {
+                                         "matcher":  "Edit|Write|MultiEdit",
+                                         "hooks":  [
+                                                       {
+                                                           "type":  "command",
+                                                           "command":  "powershell.exe",
+                                                           "args":  [
+                                                                        "-NoProfile",
+                                                                        "-ExecutionPolicy",
+                                                                        "Bypass",
+                                                                        "-File",
+                                                                        "${CLAUDE_PROJECT_DIR}/.claude/hooks/guard-edits.ps1"
+                                                                    ],
+                                                           "timeout":  20
+                                                       }
+                                                   ]
+                                     },
+                                     {
+                                         "matcher":  "Bash|PowerShell",
+                                         "hooks":  [
+                                                       {
+                                                           "type":  "command",
+                                                           "command":  "powershell.exe",
+                                                           "args":  [
+                                                                        "-NoProfile",
+                                                                        "-ExecutionPolicy",
+                                                                        "Bypass",
+                                                                        "-File",
+                                                                        "${CLAUDE_PROJECT_DIR}/.claude/hooks/guard-commands.ps1"
+                                                                    ],
+                                                           "timeout":  30
+                                                       }
+                                                   ]
+                                     }
+                                 ]
+              }
+}

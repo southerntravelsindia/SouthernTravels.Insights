@@ -1,0 +1,84 @@
+# INS-01 Ticket & Service Status — standalone React app
+
+A static single-page app (React 19, TypeScript, Vite 8) that signs the user in with an OTP and calls
+**STPLCostSheetAPI directly**. The repo no longer contains the .NET Insights site: its stylesheets and logo are kept
+here unchanged (`src/styles/insights/tokens.css`, `site.css`, `login.css`, `src/assets/logo-southern.png`), copied from
+the Razor site at commit `56d2c67`. That commit is also the design baseline the code comments refer to (`Views/...`,
+`Infrastructure/...`). The page-scroll pattern is described in `docs/SCROLL_BEHAVIOUR.md`.
+
+> Design change from TSD INS-01 v0.7.5 §2.2 (React behind the ASP.NET Core BFF), requested 28 Oct 2026 with the tech
+> lead's approval stated by the developer. The TSD, the contract's "Callers" section and the security review need
+> updating to match (see "Before production" below).
+
+## Run
+
+```bash
+npm ci
+cp .env.example .env.local      # then set the values (never commit .env files)
+npm run dev                     # http://localhost:5173, /stpl-api/ forwarded to STPL_API_PROXY_TARGET
+npm test                        # Vitest + React Testing Library
+npm run build                   # → dist/
+npm run preview                 # serves dist/ on http://localhost:4173
+```
+
+On Git Bash, a value such as `/stpl-api/` passed on the command line is turned into a Windows path; put it in
+`.env.local` or prefix the command with `MSYS_NO_PATHCONV=1`.
+
+## Settings (`.env.example`)
+
+| Key | Used | Meaning |
+|---|---|---|
+| `VITE_API_BASE_URL` | build | STPLCostSheetAPI root the browser calls, ending in `/`: the part before `/api/` (every route is `api/<Controller>/<Action>`). Absolute (`https://…/`) or a same-origin path (`/stpl-api/`) behind a reverse proxy. Checked at start-up (`src/app/config.ts`) |
+| `VITE_BASE_PATH` | build | Path the site is served under; `/` by default |
+| `VITE_INSIGHTS_URL` | build, optional | Root of the Insights site that hosts the other 14 reports. The side menu links them as `<root>Operations/<Report>?pick=1`; when empty they are shown disabled |
+| `STPL_API_PROXY_TARGET` | dev server | Where `npm run dev` forwards `/stpl-api/` |
+
+## How it talks to the API
+
+- `src/lib/api.ts` is the only client. INS-01 routes (`api/TicketServiceStatus/*`) follow
+  `docs-claude/planned/contracts/INS-01.md` v0.1: POST, JSON, the user JWT as `securityKey` and the login name as
+  `UserName` in the body, `MineOnly`, paging and row keys from the URL state. Replies are mapped in
+  `src/reports/ins01/data.ts`, reading field names case-insensitively: the contract documents PascalCase, the API as
+  built sends ASP.NET Core's default camelCase. 15 s timeout; 401 → token forgotten, login page.
+- Login uses `api/Account/SendOTP` and `api/Account/ValidateUserOTP` with `EmailId` (and `OTPCode`) only; **there is no
+  contract file for them yet**. The browser can't send `UserIP`, so the API must accept it as optional and record the
+  address it sees (change on STPLCostSheetAPI branch `feat/claude-ins-01-cors`).
+- "Mine only" matches tickets on the `UserName` that `usp_ValidateUserOTP` returns for the login (the token's name
+  claim) against the booking executive and the executives assigned to services.
+- The token is kept in `sessionStorage` (this tab only, cleared on logout or when the tab closes). It is readable by
+  any script on the page, so the site must load no third-party scripts and must send a strict CSP.
+
+## Hosting
+
+Any static host (IIS site or virtual directory, nginx). Needed:
+
+1. **SPA fallback:** unknown paths return `index.html` (IIS URL Rewrite / nginx `try_files`).
+2. **Headers** on every response:
+   `Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' <API origin>; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'`,
+   `X-Content-Type-Options: nosniff`, `Referrer-Policy: same-origin`, HSTS on HTTPS. `index.html` with `Cache-Control: no-cache`; `assets/*` can be cached long (hashed names).
+3. **Reaching the API**, one of:
+   - **CORS on STPLCostSheetAPI** (change in that repo): allow this site's origin only, methods `POST`, headers
+     `Content-Type, X-Correlation-ID`, no credentials; or
+   - **Same-origin reverse proxy** (`/stpl-api/` → API on the same host name): no CORS change, set
+     `VITE_API_BASE_URL=/stpl-api/`.
+
+## Status against TSD INS-01 (28 Oct 2026)
+
+| Phase | Built | Open |
+|---|---|---|
+| 4 Live data | KPI, lists, drill-downs and Expand All from the contract routes; Cancelled card (AC9) and "60% · 2 pending" line (AC12), both provisional; loading, empty, degraded and error states | Never run against a real API; BA Q3, Q6, Q9, Q10; UAT exit gate (ACs 3–20, 27, 31) |
+| 5 Filters | Ten multi-selects, four date ranges, search (Enter / 400 ms), Period (Today, This Week Mon–Sun, This Month default, Custom; IST), Clear filters, tablet/phone sheet with Done, everything in the URL, last view restored per browser session, filter lists cached per session with a 10 s timeout and built-in fallback, limit messages (H6) | Filter values against the real API (ids of each list, Booking Executive sent as user name, vendor ids before Phase 2b); UAT exit gate (ACs 21–26) |
+
+The filter lists come from `api/Reports/GetOperationsReportFilters` (body `tenantID`, `userId`, `userName`, `securityKey`, as
+the Insights site sent it), which is not in the INS-01 contract. A list the API can't supply and that has no built-in ids
+(contract v0.1 gives ids only for OPS Status, Service Status and Service Type) is shown as "List unavailable".
+
+## Before production (gates)
+
+- API: **rate limits on `api/Account/SendOTP` and `api/Account/ValidateUserOTP`** (the Insights site limited them to 5/min per
+  IP; a browser app cannot) and on the INS-01 routes (TSD H7).
+- API: **"Show all" (`MineOnly=false`) is not permission-checked yet** (contract v0.1, Access Management Phase 6). Any
+  user with a token can read every branch's tickets and vendor margins. Not for production users until enforced.
+- API: CORS or reverse proxy (above). HTTPS only.
+- Docs: TSD §2.2/§3/§6/H9/H20 and the contract's Callers and Auth sections updated for a browser caller; a contract for
+  the two login routes.
